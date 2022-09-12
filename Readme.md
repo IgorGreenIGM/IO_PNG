@@ -1,7 +1,6 @@
- * @author : Mogou igor green
- * @mail : igormogou86@gmail.com
- * @file : Readme.md
- * @date : 2022-09-05 23:41
+ * author : Mogou igor green
+ * mail : igormogou86@gmail.com
+ * date : 2022-09-05 23:41
 
 **Resume**
 
