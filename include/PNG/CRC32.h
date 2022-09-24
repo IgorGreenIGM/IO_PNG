@@ -1,6 +1,8 @@
 #ifndef _CRC_32_H_INCLUDED_
 #define _CRC_32_H_INCLUDED_
 
+#include <iostream>
+
 /**
  * @brief CRC32 class, for CRC32 algorithm. 
  * 

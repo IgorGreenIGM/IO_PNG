@@ -1,6 +1,3 @@
-#include <iostream>
-#include <cstring>
-#include <cmath>
 
 #include "../../include/PNG/Utilities.h"
 
@@ -19,7 +16,7 @@ uint8_t *Utilities::int_to_uint8(int number)
         result = ptr;
     else
     {
-        result = invertArray(ptr, sizeof(int));
+        result = invertArray(ptr, 4);
         delete[] ptr;
     }
     return result;
@@ -34,8 +31,8 @@ uint8_t *Utilities::int_to_uint8(int number)
 int Utilities::uint8_to_int(uint8_t *ptr)
 {
     int result(0);
-    for (int i = 0; i < sizeof(int); i++)
-        result += ptr[i] * pow(256, sizeof(int) - 1 - i);
+    for (int i = 0; i < 4; i++)
+        result += ptr[i] * pow(256, 4 - 1 - i);
 
     return result;
 }
@@ -118,7 +115,7 @@ int Utilities::f_strchr(std::ifstream &input, std::string word, int limit)
 
     bool is_found(false);
     uint8_t actual(0);
-    int i(0), j(0);
+    std::size_t i(0), j(0);
 
     if (!limit) // if the limits is defaut (0), we'll search word in entire file 
         limit = f_len(input);
@@ -224,7 +221,7 @@ void Utilities::flipPixels(uint8_t *pixelsBuffer, int s_width, int s_heigth, int
  * @param upperLeft the upperleft pixel value
  * @return the paeth predicted value
  */
-int Utilities::PaethPredictor(uint8_t left, uint8_t up, uint8_t upperLeft)
+int Utilities::paeth_predictor(uint8_t left, uint8_t up, uint8_t upperLeft)
 {
     int p = (left + up - upperLeft);
     int p_left = abs(p - left), p_up = abs(p - up), p_upperLeft = abs(p - upperLeft);
@@ -249,4 +246,32 @@ void Utilities::stream_write(const uint8_t *src, int src_size, std::ofstream &ou
 {
     for (int i = 0; i < src_size; i++)
         ouputStream << std::noskipws << src[i];
+}
+
+
+/**
+ * @brief Method for counting the number of elements(without redundance) inside an input buffer. 
+ * 
+ * @param buffer input buffer
+ * @param buffer_len input buffer size
+ * @return int the number differents values inside the buffer
+ */
+int Utilities::get_cardinal(uint8_t *buffer, int buffer_len) noexcept
+{       
+    std::vector<uint8_t> computed;
+    for(int i = 0; i < buffer_len; ++i)
+    {
+        bool compute = true;
+        for(auto value : computed)
+            if(buffer[i] == value)
+            {
+                compute = false;
+                break;
+            }
+ 
+        if(compute)
+            computed.push_back(buffer[i]);
+    }
+
+    return static_cast<int>(computed.size());
 }

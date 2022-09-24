@@ -38,13 +38,13 @@ IHDR_CHUNK::IHDR_CHUNK(int width, int height, int bitDepth, int colorMode)
     uint8_t *widthArrayPtr = Utilities::int_to_uint8(m_width);
     uint8_t *heightArrayPtr = Utilities::int_to_uint8(m_height);
 
-    uint8_t *cat_r1 = Utilities::getConcatenedArray(m_type, widthArrayPtr, 4, sizeof(int));
-    uint8_t *cat_r2 = Utilities::getConcatenedArray(heightArrayPtr, m_data, sizeof(int), 5);
+    uint8_t *cat_r1 = Utilities::getConcatenedArray(m_type, widthArrayPtr, 4, 4);
+    uint8_t *cat_r2 = Utilities::getConcatenedArray(heightArrayPtr, m_data, 4, 5);
 
     //the crc32 calculation algorithm needs the concatened array of the chunk type and the chunk datas
-    uint8_t *dataCRC = Utilities::getConcatenedArray(cat_r1, cat_r2, 4 + sizeof(int), 5 + sizeof(int));
+    uint8_t *dataCRC = Utilities::getConcatenedArray(cat_r1, cat_r2, 4 + 4, 5 + 4);
 
-    m_crc32 = CRC32::getCRC32(dataCRC, 9 + 2*sizeof(int)); //calculate  crc32 
+    m_crc32 = CRC32::getCRC32(dataCRC, 9 + 2*4); //calculate  crc32 
 
     delete[] widthArrayPtr;   delete[] heightArrayPtr;  delete[] dataCRC; 
     delete[] cat_r1; delete[] cat_r2;
@@ -77,13 +77,63 @@ void IHDR_CHUNK::save(std::ofstream &outputStream)
     uint8_t *crc32ArrayPtr = Utilities::int_to_uint8(m_crc32);
 
     // writing values
-    Utilities::stream_write(lengthArrayPtr, sizeof(int), outputStream);
+    Utilities::stream_write(lengthArrayPtr, 4, outputStream);
     Utilities::stream_write(m_type, 4, outputStream);
-    Utilities::stream_write(widthArrayPtr, sizeof(int), outputStream);
-    Utilities::stream_write(heightArrayPtr, sizeof(int), outputStream);
+    Utilities::stream_write(widthArrayPtr, 4, outputStream);
+    Utilities::stream_write(heightArrayPtr, 4, outputStream);
     Utilities::stream_write(m_data, 5, outputStream);
     Utilities::stream_write(crc32ArrayPtr, sizeof(unsigned long), outputStream);
 
     delete[] lengthArrayPtr;    delete[] crc32ArrayPtr;     //freeing the bytes arrays
     delete[] widthArrayPtr;     delete[] heightArrayPtr;
+}
+
+/**
+ * @brief get png width
+ * 
+ * @return int 
+ */
+int IHDR_CHUNK::get_width()
+{
+    return this->m_width;
+}
+
+/**
+ * @brief get png height
+ * 
+ * @return int 
+ */
+int IHDR_CHUNK::get_height()
+{
+    return this->m_height;
+}
+
+/**
+ * @brief get png bit depth
+ * 
+ * @return uint8_t 
+ */
+uint8_t IHDR_CHUNK::get_bitDepth()
+{
+    return this->m_data[0];
+}
+
+/**
+ * @brief get png color mode 
+ * 
+ * @return uint8_t 
+ */
+uint8_t IHDR_CHUNK::get_colorMode()
+{
+    return this->m_data[1];
+}
+
+/**
+ * @brief get png interlacing mode
+ * 
+ * @return uint8_t 
+ */
+uint8_t IHDR_CHUNK::get_interlacing()
+{
+    return this->m_data[4];
 }

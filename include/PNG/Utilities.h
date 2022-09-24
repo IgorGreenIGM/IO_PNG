@@ -1,9 +1,12 @@
 #ifndef _UTILITIES_H_INCLUDED_
 #define _UTILITIES_H_INCLUDED_
 
-#include <iostream>
-#include <fstream>
+#include <map>
+#include <cmath>
 #include <vector>
+#include <fstream>
+#include <cstring>
+#include <iostream>
 
 /**
  * @brief a set of method, not diretly useful for pixels managing or image processing but usefull for facilitate work
@@ -25,10 +28,8 @@ namespace Utilities
     void stream_write(const uint8_t *src, int src_size, std::ofstream &ouputStream);
 
     void flipPixels(uint8_t *pixelsBuffer, int s_width, int s_heigth, int colorChannel);
-    int PaethPredictor(uint8_t left, uint8_t up, uint8_t upperLeft);
-
-    template <typename T>
-    void quicksort(T *array, int low, int high);
+    int paeth_predictor(uint8_t left, uint8_t up, uint8_t upperLeft);
+    int get_cardinal(uint8_t *buffer, int buffer_len) noexcept;
 };
 
 #endif //_UTILITIES_H_INCLUDED_

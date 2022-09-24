@@ -17,11 +17,11 @@ PHYS_CHUNK::PHYS_CHUNK(unsigned int ppuX, unsigned int ppuY, uint8_t unitSpecifi
 {
     m_length = 9;                        // setting up the pHYs chunk data length(always 9)
 
-    m_type = new uint8_t[4];       // setting up  the pHYs type (pHYs in Hexadecimal)
-    m_type[0] = 0x70; //p
-    m_type[1] = 0x48; //H
-    m_type[2] = 0x59; //Y
-    m_type[3] = 0x73; //s
+    this->m_type = new uint8_t[4];       // setting up  the pHYs type (pHYs in Hexadecimal)
+    this->m_type[0] = 0x70; //p
+    this->m_type[1] = 0x48; //H
+    this->m_type[2] = 0x59; //Y
+    this->m_type[3] = 0x73; //s
 
     m_ppuX = ppuX;                      // setting the physical pixels dimension on each axis (x and y)
     m_ppuY = ppuY;
@@ -37,13 +37,13 @@ PHYS_CHUNK::PHYS_CHUNK(unsigned int ppuX, unsigned int ppuY, uint8_t unitSpecifi
     uint8_t *ppuXArrayPtr = Utilities::int_to_uint8(m_ppuX);
     uint8_t *ppuYArrayPtr = Utilities::int_to_uint8(m_ppuY); 
 
-    uint8_t *cat_r1 = Utilities::getConcatenedArray(m_type, ppuXArrayPtr, 4, sizeof(int));
-    uint8_t *cat_r2 = Utilities::getConcatenedArray(ppuYArrayPtr, &m_unitSpecifier, sizeof(int), 1);
+    uint8_t *cat_r1 = Utilities::getConcatenedArray(this->m_type, ppuXArrayPtr, 4, 4);
+    uint8_t *cat_r2 = Utilities::getConcatenedArray(ppuYArrayPtr, &m_unitSpecifier, 4, 1);
 
     //the crc32 calculation algorithm needs the concatened array of the chunk type and the chunk datas
-    uint8_t *dataCRC = Utilities::getConcatenedArray(cat_r1, cat_r2, 4 + sizeof(int), sizeof(int) + 1);
+    uint8_t *dataCRC = Utilities::getConcatenedArray(cat_r1, cat_r2, 4 + 4, 4 + 1);
 
-    m_crc32 = CRC32::getCRC32(dataCRC, 5 + 2*sizeof(int));     //we calculate the crc and write it into the file stream
+    m_crc32 = CRC32::getCRC32(dataCRC, 5 + 2*4);     //we calculate the crc and write it into the file stream
     delete[] ppuXArrayPtr;    delete[] ppuYArrayPtr;    delete[] dataCRC;
     delete[] cat_r1; delete[] cat_r2;
 }
@@ -54,7 +54,7 @@ PHYS_CHUNK::PHYS_CHUNK(unsigned int ppuX, unsigned int ppuY, uint8_t unitSpecifi
  */
 PHYS_CHUNK::~PHYS_CHUNK()
 {
-    delete[] m_type;
+    delete[] this->m_type;
 }
 
 /**
@@ -71,10 +71,10 @@ void PHYS_CHUNK::save(std::ofstream &outputStream)
     uint8_t *crc32ArrayPtr = Utilities::int_to_uint8(m_crc32);
 
     //then we write chunk datas in the file stream
-    Utilities::stream_write(lengthArrayPtr, sizeof(int), outputStream);
-    Utilities::stream_write(m_type, 4, outputStream);
-    Utilities::stream_write(ppuXArrayPtr, sizeof(int), outputStream);
-    Utilities::stream_write(ppuYArrayPtr, sizeof(int), outputStream);
+    Utilities::stream_write(lengthArrayPtr, 4, outputStream);
+    Utilities::stream_write(this->m_type, 4, outputStream);
+    Utilities::stream_write(ppuXArrayPtr, 4, outputStream);
+    Utilities::stream_write(ppuYArrayPtr, 4, outputStream);
     Utilities::stream_write(&m_unitSpecifier, 1, outputStream);
     Utilities::stream_write(crc32ArrayPtr, sizeof(unsigned long), outputStream);
 
@@ -87,10 +87,9 @@ void PHYS_CHUNK::save(std::ofstream &outputStream)
  * @details cause pHYs is a not critical chunk, we need before write it in the png file if its should be present or not
  * this will be usefull when calling the PNG::save() method, to specify if the phys chunk should be written or not
  * 
- * @return true 
- * @return false 
+ * @return bool. the state of the chunk
  */
-bool PHYS_CHUNK::getState()
+bool PHYS_CHUNK::get_state()
 {
     return m_state;
 }

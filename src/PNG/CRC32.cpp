@@ -1,11 +1,4 @@
-/**
- * @brief checksum 32 control algorithm, in this case used to generate the crc of png chunks
- * @param CHUNK datas
- * @param length of the datas CHUNK
- * @return the crc ofthe corresponding CHUNK (unsigned long)
- */
 
-#include <iostream>
 #include "../../include/PNG/CRC32.h"
 
 

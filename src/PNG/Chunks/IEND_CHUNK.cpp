@@ -13,14 +13,14 @@ IEND_CHUNK::IEND_CHUNK()
 {
     m_length = 0;                   //setting the IEND chunk length (always 0)
 
-    m_type = new uint8_t[4];  //setting the IEND type (IEND in Hexadecimal) 
-    m_type[0] = 0x49; //I
-    m_type[1] = 0x45; //E
-    m_type[2] = 0x4E; //N
-    m_type[3] = 0x44; //D
+    this->m_type = new uint8_t[4];  //setting the IEND type (IEND in Hexadecimal) 
+    this->m_type[0] = 0x49; //I
+    this->m_type[1] = 0x45; //E
+    this->m_type[2] = 0x4E; //N
+    this->m_type[3] = 0x44; //D
 
     //the crc32 calculation algorithm needs the concatened array of the chunk type and the chunk datas, note that this xhunk doesn't have any datas
-    m_crc32 = CRC32::getCRC32(m_type, 4);   //calculating the crc32 value 
+    m_crc32 = CRC32::getCRC32(this->m_type, 4);   //calculating the crc32 value 
 }
 
 /**
@@ -29,7 +29,7 @@ IEND_CHUNK::IEND_CHUNK()
  */
 IEND_CHUNK::~IEND_CHUNK()
 {
-    delete[] m_type;
+    delete[] this->m_type;
 }
 
 /**
@@ -44,9 +44,9 @@ void IEND_CHUNK::save(std::ofstream &outputStream)
     uint8_t *crcArrayPtr = Utilities::int_to_uint8(m_crc32);
 
     //then we write chunks datas in the file stream
-    Utilities::stream_write(lengthArrayPtr, sizeof(int), outputStream);
-    Utilities::stream_write(m_type, 4, outputStream);
-    Utilities::stream_write(crcArrayPtr, sizeof(int), outputStream);
+    Utilities::stream_write(lengthArrayPtr, 4, outputStream);
+    Utilities::stream_write(this->m_type, 4, outputStream);
+    Utilities::stream_write(crcArrayPtr, 4, outputStream);
 
     delete[] lengthArrayPtr;    delete[] crcArrayPtr; //freeing the allocated memory
 }
