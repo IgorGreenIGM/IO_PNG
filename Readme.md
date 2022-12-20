@@ -1,14 +1,9 @@
- * @author : Mogou igor green
- * @mail : igormogou86@gmail.com
- * @file : Readme.md
- * @date : 2022-09-05 23:41
-
-**Resume**
+**📚 Resume**
 
     This is a full C++ Oriented Object(OO) library for simplify PNG manipulations.
     This library designed to be tiny as possible, purpose severals functions that make easier Pixels Manipulations inside PNG images.
 
-**Features**
+**💡 Features**
 
     - PNG decoder and encoder :
         ~ supports bit all possibles bit depths(8, 16)
@@ -24,12 +19,12 @@
     - CRC32 computing algortithm
     - Exceptions Handling.
 
-**Installation**
+**⚙️ Installation**
 
     Just copy the src, and include folder then copy it in your project directory.
     [Note] : Be carefull with the include mapping in src files.
 
-**To-Do-List**
+**✔️ To-Do-List**
 
     - Support bits depths 16                                                                 [DONE] 
     - Using smart pointers instead on buffer pointers
@@ -42,7 +37,7 @@
     - support extraction of meta-data in string form.
 
 
-**Notes**
+**📝 Notes**
 
     [Librairies] : zlib for defalte method implementation(only one managed by PNG format)
                    openGL for screenshot method. 
