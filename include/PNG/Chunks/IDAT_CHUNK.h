@@ -17,7 +17,7 @@
 class IDAT_CHUNK
 {   
     public :
-        IDAT_CHUNK(const uint8_t *pixelsBuffer, int s_width, int s_height, int colorChannel);
+        IDAT_CHUNK(const uint8_t *pixelsBuffer, int s_width, int s_height, int colorChannel, int compress_mode);
         ~IDAT_CHUNK();
         
         void save(std::ofstream &outputStream);
@@ -30,7 +30,7 @@ class IDAT_CHUNK
         unsigned long m_crc32; /**< the crc32 value computed from the concatened buffers of type and datas*/
 
         uint8_t *generate_scanlines(const uint8_t *pixelBuffer, int s_width, int s_height, int colorChannel);
-        uint8_t *deflate_datas(const uint8_t *pixelBuffer, int s_width, int s_height, int colorChannel, int &deflatedLen);
+        uint8_t *deflate_datas(const uint8_t *pixelBuffer, int s_width, int s_height, int colorChannel, int &deflatedLen, int compress_mode);
         uint8_t *filter_line(const uint8_t *line_in, int lineLength, uint8_t filterMode, bool is_prev_line, const uint8_t *unfiltered_prev_line, uint8_t colorChannel);
 
     friend class PNG;
