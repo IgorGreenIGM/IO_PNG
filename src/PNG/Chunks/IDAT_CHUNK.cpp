@@ -7,12 +7,13 @@
 /**
  * @brief Construct a new IDAT_CHUNK::IDAT_CHUNK object
  *
- * @param pixelsBuffer the pixels buffer (raw values) pointer
- * @param s_width the png width (according to the pixelsBuffer)
- * @param s_height the png height (according to the pixelsBuffer)
- * @param colorChannel the png color channel number
+ * @param pixelsBuffer raw pixels buffer 
+ * @param s_width png width (according to the pixelsBuffer)
+ * @param s_height png height (according to the pixelsBuffer)
+ * @param colorChannel png color channel number
+ * @param compress_mode compression mode
  */
-IDAT_CHUNK::IDAT_CHUNK(const uint8_t *pixelsBuffer, int s_width, int s_height, int colorChannel)
+IDAT_CHUNK::IDAT_CHUNK(const uint8_t *pixelsBuffer, int s_width, int s_height, int colorChannel, int compress_mode)
 {
     this->m_type = new uint8_t[4]; // setting the IDAT type (IDAT in Hexadecimal)
     this->m_type[0] = 0x49;        // I
@@ -20,7 +21,7 @@ IDAT_CHUNK::IDAT_CHUNK(const uint8_t *pixelsBuffer, int s_width, int s_height, i
     this->m_type[2] = 0x41;        // A
     this->m_type[3] = 0x54;        // T
 
-    m_data = deflate_datas(pixelsBuffer, s_width, s_height, colorChannel, m_length); // getting the deflated data output
+    m_data = deflate_datas(pixelsBuffer, s_width, s_height, colorChannel, m_length, compress_mode); // getting deflated data output
 
     // the crc32 calculation algorithm needs the concatened array of the chunk type and the chunk datas
     uint8_t *dataCRC = Utilities::getConcatenedArray(this->m_type, m_data, 4, m_length);
@@ -79,7 +80,7 @@ uint8_t *IDAT_CHUNK::generate_scanlines(const uint8_t *pixels, int s_width, int 
         uint8_t *scanlines = new uint8_t[s_height * (1 + s_width * colorChannel)]; // output
 
         uint8_t *tmp_filtered_line{nullptr};          // temp filtered lines buffer
-        std::vector<uint8_t> filters_modes(s_height); // lowest filter modes container
+        std::vector<uint8_t> filters_modes(s_height); // lowest computed filters modes
         for (int i = 1; i <= s_height; ++i)           // testing each filter mode and stores the one with lowest Cardinal.
         {
             std::vector<int> filterMode_cardinal;
@@ -102,7 +103,7 @@ uint8_t *IDAT_CHUNK::generate_scanlines(const uint8_t *pixels, int s_width, int 
             filterMode_cardinal.clear();
         }
 
-        uint8_t **filtered_line = new uint8_t *[s_height]; // filtering all pixels lines with the previously stored filters modes
+        uint8_t **filtered_line = new uint8_t* [s_height]; // filtering all pixels lines with the previously stored filters modes
         for (int i = 1; i <= s_height; i++)
             memcpy(
                 scanlines + 1 + (i - 1) * (1 + s_width * colorChannel),
@@ -193,9 +194,10 @@ uint8_t *IDAT_CHUNK::generate_scanlines(const uint8_t *pixels, int s_width, int 
  * @param s_height the number of pixels in the pixels buffer (height)
  * @param colorChannel the number of color channel in the pixels buffer
  * @param deflatedLen a reference for getting the output defalted length
+ * @param compress_mode compression mode
  * @return a pointer to the deflated datas buffer
  */
-uint8_t *IDAT_CHUNK::deflate_datas(const uint8_t *pixelBuffer, int s_width, int s_height, int colorChannel, int &deflatedLen)
+uint8_t *IDAT_CHUNK::deflate_datas(const uint8_t *pixelBuffer, int s_width, int s_height, int colorChannel, int &deflatedLen, int compress_mode)
 {
     unsigned long inLen = s_height * (1 + s_width * colorChannel), tmpLen = 0;            // input len of scanlines datas
     uint8_t *scanlines = generate_scanlines(pixelBuffer, s_width, s_height, colorChannel); // generating scanlines from the pixels
@@ -213,7 +215,7 @@ uint8_t *IDAT_CHUNK::deflate_datas(const uint8_t *pixelBuffer, int s_width, int 
     defstream.avail_out = 0;
     defstream.next_out = (Bytef *)deflatedDatas;
 
-    if ((result = deflateInit(&defstream, Z_BEST_COMPRESSION)) == Z_OK)
+    if ((result = deflateInit(&defstream, compress_mode)) == Z_OK)
     {
         // calculate the actual length and update zlib structure
         unsigned long estimateLen = deflateBound(&defstream, inLen);
