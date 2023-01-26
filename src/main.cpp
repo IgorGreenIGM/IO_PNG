@@ -1,19 +1,21 @@
+// SIMPLE FILE DECODE EXEMPLE
+
 #include <iostream>
-#include <string>
-#include <ctime>
-#include "../include/PNG/Utilities.h"
+#include <utility>
 #include "../include/PNG/PNG.h"
 
 int main()
 {
-    auto t1 = time(nullptr);
-    PNG p("./pp.png");
+    // decode then encode png file
+    PNG png_in("example.png"); 
+    png_in.save("out.png", PNG::COMPRESS::BEST);
     
-    auto t2 = time(nullptr);
-
-    std::cout << t2 - t1 << "\n";
-
-    p.save("./gh.png");
-
+    // decode then retrive png informations
+    auto pixels = std::unique_ptr<uint8_t>(png_in.get_raw_pixels());    
+    int width = png_in.get_width();
+    int height = png_in.get_height();
+    int color_mode = png_in.get_colorMode();
+    
+    std::cout << "dimensions " << with << "x" << height << "color mode : " << color_mode << std::endl;
     return 0;
 }
