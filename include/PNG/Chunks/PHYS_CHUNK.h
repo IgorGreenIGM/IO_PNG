@@ -15,10 +15,8 @@ class PHYS_CHUNK
         ~PHYS_CHUNK();
         
         void save(std::ofstream &outputStream);
-        bool get_state();
 
     private :
-        bool m_state = false; /**< indicates state of the chunk, if it should be written or not ine the PNG file. @see PNG::save() */
         int m_length; /**< the length of the CHUNK */
         uint8_t *m_type = nullptr; /**< the type of the CHUNK corresponding to the name of the chunk in hexadecimal*/
         unsigned int m_ppuX; /**< the physical pixel dimension (on x axis)*/
