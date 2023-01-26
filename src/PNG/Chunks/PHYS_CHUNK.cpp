@@ -28,12 +28,6 @@ PHYS_CHUNK::PHYS_CHUNK(unsigned int ppuX, unsigned int ppuY, uint8_t unitSpecifi
 
     m_unitSpecifier = unitSpecifier;   // setting the unit specifier, (0 = non specified, 1 = meter)
 
-    // physical pixel dimension on x or y axis should not be 0, if 0 appear we considere the chunk absent
-    if ( ppuX == 0 || ppuY == 0)  
-        m_state = false;
-    else
-        m_state = true;
-
     uint8_t *ppuXArrayPtr = Utilities::int_to_uint8(m_ppuX);
     uint8_t *ppuYArrayPtr = Utilities::int_to_uint8(m_ppuY); 
 
@@ -80,16 +74,4 @@ void PHYS_CHUNK::save(std::ofstream &outputStream)
 
     delete[] lengthArrayPtr;    delete[] crc32ArrayPtr; //freeing the bytes arrays
     delete[] ppuXArrayPtr;     delete[] ppuYArrayPtr;
-}
-
-/**
- * @brief get the state of the actual pHYs chunk in the png file
- * @details cause pHYs is a not critical chunk, we need before write it in the png file if its should be present or not
- * this will be usefull when calling the PNG::save() method, to specify if the phys chunk should be written or not
- * 
- * @return bool. the state of the chunk
- */
-bool PHYS_CHUNK::get_state()
-{
-    return m_state;
 }
