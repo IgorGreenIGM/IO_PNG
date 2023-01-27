@@ -28,3 +28,31 @@ This project use zlib, so to avoid using dll is to directly include zlib source 
 
 <h2>🏴󠁶󠁥󠁷󠁿 Dependencies </h2>
 zlib 1.2.3 
+
+<h2>📈 Performance</h2>
+Here down is a graph that show efficiency of the multithread dynamic scanline filtering method.<br>
+A set of 512 images was used to generate this graph,<br>
+Where each image is a downscaled version of an initial image, to make this repeatable<br><br>
+Script for image downscale:
+
+```python:
+from PIL import Image
+
+for i in range(1, 512 + 1, 1): 
+    basewidth = 10*i
+    img = Image.open('red.png')
+    wpercent = (basewidth/float(img.size[0]))
+    hsize = int((float(img.size[1])*float(wpercent)))
+    img = img.resize((basewidth,hsize), Image.Resampling.LANCZOS)
+    img.save("./out/{:.1f}".format(i) + ".png")
+```
+<br>Build on :
+```
+Intel(R) Core(TM) i7-4810MQ CPU @ 2.80GHz (8 CPUs), ~2.8GHz
+Memory: 16384MB RAM DDR4
+WDC WD5000LPCX-24C6HT0 SATA 500GB
+Windows 10 Professionnel 64-bit (10.0, Build 18362)
+GNU GCC Compiler Multilib
+```
+
+<img src="dynamic_filter.svg" alt="Dynamic Scanline Graph">
