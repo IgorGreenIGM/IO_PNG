@@ -1,6 +1,6 @@
 <h2>📚 Resume</h2>
 
-This is a full Modern C++ Object Oriented library for PNG file format Encode/Decode.<br>
+This is a full Modern C++ Object Oriented library for PNG file format Encoder/Decoder.<br>
 This library designed to be tiny as possible, purpose severals functions that make easier Pixels Manipulations inside PNG images.
 
 <h2>💡 Idea</h2>
